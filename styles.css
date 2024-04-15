@@ -1,0 +1,76 @@
+body {
+    background-color: #212121;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: azure;
+    cursor: default;
+}
+
+/* Quitar flechas del input  de tipo number 
+    Para navegadores basados en WebKit (Chrome, Safari) */
+#numberInput::-webkit-inner-spin-button,
+#numberInput::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Para navegadores basados en Firefox */
+#numberInput[type=number] {
+    -moz-appearance: textfield;
+}
+
+input {
+    font-size: 20px;
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+button {
+    background-color: #14ed3c;
+    color: rgb(255, 255, 255);
+    /* Text shadows para darle bordes al texto*/
+    text-shadow: -1px -1px 0 #000,  
+                  1px -1px 0 #000,
+                 -1px 1px 0 #000,
+                  1px 1px 0 #000; 
+    font-size: 20px;
+    border: 2px solid #ccc;
+    border-radius: 7px;
+    padding: 5px;
+    margin: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #3f8317;
+}
+
+#removeContactBtn {
+    background-color: rgb(234, 45, 45);
+}
+
+#removeContactBtn:hover {
+    background-color: rgba(132, 37, 37, 0.915);
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+#agendaDisplay {
+    margin-top: 20px;
+    border: 2px solid #cccccc;
+    border-radius: 15px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    text-align: left;
+}
