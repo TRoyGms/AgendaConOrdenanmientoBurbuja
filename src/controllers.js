@@ -1,3 +1,5 @@
+//controllers.js
+
 import { PhoneBook } from './Models/phonebook.js';
 const phoneBook = new PhoneBook();
 
@@ -19,6 +21,7 @@ export function addContact() {
     const name = document.getElementById('nameInput').value;
     const number = document.getElementById('numberInput').value;
     phoneBook.addContact(name, number);
+    phoneBook.bubbleSortContacts(); // Ordenar los contactos después de agregar uno nuevo
 }
 
 export function showAgenda() {
@@ -29,6 +32,7 @@ export function showAgenda() {
 export function removeContact() {
     const number = document.getElementById('removeInput').value;
     phoneBook.removeContactByNumber(number);
+    phoneBook.bubbleSortContacts(); // Ordenar los contactos después de eliminar uno
     const contacts = phoneBook.getAllContacts();
     displayContacts(contacts);
 }
