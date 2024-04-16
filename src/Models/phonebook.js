@@ -1,105 +1,107 @@
 import { ContactNode } from './contacts.js';
-class QueueNode {
+
+class ListNode {
     constructor(value) {
         this.value = value;
         this.next = null;
     }
 }
 
-class Queue {
+class LinkedList {
     constructor() {
-        this.front = null;
-        this.rear = null;
+        this.head = null;
         this.size = 0;
     }
 
-    enqueue(value) {
-        const newNode = new QueueNode(value);
-        if (!this.front) {
-            this.front = newNode;
-            this.rear = newNode;
+    add(value) {
+        const newNode = new ListNode(value);
+        if (!this.head) {
+            this.head = newNode;
         } else {
-            this.rear.next = newNode;
-            this.rear = newNode;
+            let current = this.head;
+            while (current.next) {
+                current = current.next;
+            }
+            current.next = newNode;
         }
         this.size++;
     }
 
-    dequeue() {
-        if (!this.front) {
-            return null;
+    remove(value) {
+        if (!this.head) {
+            return;
         }
-        const removedNode = this.front;
-        this.front = this.front.next;
-        if (!this.front) {
-            this.rear = null;
+        if (this.head.value === value) {
+            this.head = this.head.next;
+            this.size--;
+            return;
         }
-        this.size--;
-        return removedNode.value;
+        let current = this.head;
+        let prev = null;
+        while (current && current.value !== value) {
+            prev = current;
+            current = current.next;
+        }
+        if (current) {
+            prev.next = current.next;
+            this.size--;
+        }
     }
 
     isEmpty() {
         return this.size === 0;
     }
 
-    peek() {
-        return this.front ? this.front.value : null;
-    }
-
     getSize() {
         return this.size;
+    }
+
+    toArray() {
+        const array = [];
+        let current = this.head;
+        while (current) {
+            array.push(current.value);
+            current = current.next;
+        }
+        return array;
     }
 }
 
 class PhoneBook {
     constructor() {
-        this.head = null;
-        this.queue = new Queue();
+        this.linkedList = new LinkedList();
     }
 
     addContact(name, number) {
         const contactNode = new ContactNode(name, number);
-        if (!this.head) {
-            this.head = contactNode;
-        } else {
-            let current = this.head;
-            while (current.next) {
-                current = current.next;
-            }
-            current.next = contactNode;
-        }
-        this.queue.enqueue(contactNode);
+        this.linkedList.add(contactNode);
         return contactNode;
     }
 
     getAllContacts() {
         const contacts = [];
-        let current = this.head;
+        let current = this.linkedList.head;
         while (current) {
-            contacts.push(current.contact);
+            contacts.push(current.value.contact);
             current = current.next;
         }
         return contacts;
     }
 
     removeContactByNumber(number) {
-        if (!this.head) {
-            return;
-        }
-        if (this.head.contact.number === number) {
-            this.head = this.head.next;
-            this.queue.dequeue();
-            return;
-        }
-        let current = this.head;
+        let current = this.linkedList.head;
         let prev = null;
-        while (current && current.contact.number !== number) {
+        while (current) {
+            if (current.value.contact.number === number) {
+                if (prev === null) {
+                    this.linkedList.head = current.next;
+                } else {
+                    prev.next = current.next;
+                }
+                return;
+            }
             prev = current;
             current = current.next;
-        }
-        if (current) {
-            prev.next = current.next;
-            this.queue.dequeue();
         }
     }
 
@@ -110,15 +112,15 @@ class PhoneBook {
         let temp;
         do {
             swapped = false;
-            current = this.head;
+            current = this.linkedList.head;
             while (current && current.next) {
                 next = current.next;
-                if (this.compareContacts(current.contact, next.contact) > 0) {
+                if (this.compareContacts(current.value.contact, next.value.contact) > 0) {
                     // Intercambiar los nodos
-                    if (current === this.head) {
-                        this.head = next;
+                    if (current === this.linkedList.head) {
+                        this.linkedList.head = next;
                     } else {
-                        let prev = this.head;
+                        let prev = this.linkedList.head;
                         while (prev.next !== current) {
                             prev = prev.next;
                         }
@@ -139,16 +141,32 @@ class PhoneBook {
         } while (swapped);
     }
     
-
     compareContacts(contact1, contact2) {
-        // Función de comparación para ordenar por número primero y luego por nombre
-        if (/\d/.test(contact1.name) && !/\d/.test(contact2.name)) {
-            return -1;
-        } else if (!/\d/.test(contact1.name) && /\d/.test(contact2.name)) {
-            return 1;
-        } else {
-            return contact1.name.localeCompare(contact2.name);
+        // Función de comparación para ordenar por símbolos, números y letras
+        const categoryOrder = { 'symbol': 0, 'number': 1, 'letter': 2 };
+
+        function getCategory(contact) {
+            if (/[^a-zA-Z0-9]/.test(contact.name[0])) {
+                return 'symbol';
+            } else if (/\d/.test(contact.name[0])) {
+                return 'number';
+            } else {
+                return 'letter';
+            }
         }
+
+        const category1 = getCategory(contact1);
+        const category2 = getCategory(contact2);
+
+        // Ordenar primero por categoría
+        if (categoryOrder[category1] < categoryOrder[category2]) {
+            return -1;
+        } else if (categoryOrder[category1] > categoryOrder[category2]) {
+            return 1;
+        }
+
+        // Si están en la misma categoría, ordenar alfabéticamente
+        return contact1.name.localeCompare(contact2.name);
     }
 }
 
